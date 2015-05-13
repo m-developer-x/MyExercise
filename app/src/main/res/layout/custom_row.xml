@@ -58,7 +58,7 @@ Simple Version Custom ListView
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/line1"
                 android:textSize="10sp"
-                android:text="TEXTO 2"
+                android:text="TEXTO 2 y Subtitulo"
             />
 
             <Button
