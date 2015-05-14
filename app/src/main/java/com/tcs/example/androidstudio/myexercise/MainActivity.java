@@ -1,8 +1,10 @@
 package com.tcs.example.androidstudio.myexercise;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,9 +38,13 @@ public class MainActivity extends ActionBarActivity {
         setContentView(list);
 
         CustomAdapter adapter = new CustomAdapter(this, R.layout.custom_row,
-                R.id.line1, new String[] {"Bill","Tom","Sally","Jenny"});
+                android.R.id.text1, new String[] {"Bill","Tom","Sally","Jenny"});
 
         list.setAdapter(adapter);
+
+        new AsyncTaskC().execute();
+
+        Log.i("MESSAGE", "MAIN ACTIVITY");
 
     }
 
@@ -74,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
         public View getView(int position, View convertView, ViewGroup parent){
 
             View row = convertView;
-            //Inflate a new row if one isn´t recycled
+            //Inflate a new row if one isn't recycled
             if (row==null){
 
                 row = LayoutInflater.from(getContext()).inflate(R.layout.custom_row, parent, false);
@@ -82,17 +88,40 @@ public class MainActivity extends ActionBarActivity {
 
             String item = getItem(position);
 
-            ImageView left = (ImageView)row.findViewById(R.id.leftimage);
-            ImageView right = (ImageView)row.findViewById(R.id.rightimage);
-            TextView text = (TextView)row.findViewById(R.id.line1);
+            //ImageView left = (ImageView)row.findViewById(R.id.leftimage);
+            //ImageView right = (ImageView)row.findViewById(R.id.rightimage);
+            TextView text = (TextView)row.findViewById(android.R.id.text1);
 
-            left.setImageResource(R.drawable.icon);
-            right.setImageResource(R.drawable.icon);
+            //left.setImageResource(R.drawable.icon);
+            //right.setImageResource(R.drawable.icon);
             text.setText(item);
 
             return row;
 
         }
 
+    }
+
+    class AsyncTaskC extends AsyncTask<String, Void, String> {
+
+        private Exception exception;
+
+        protected String doInBackground(String... urls) {
+            try {
+
+                ParserJSON parse = new ParserJSON();
+                parse.consult();
+
+
+            } catch (Exception e) {
+                this.exception = e;
+                return null;
+            }
+            return "";
+        }
+
+        protected void onPostExecute(String feed) {
+
+        }
     }
 }
