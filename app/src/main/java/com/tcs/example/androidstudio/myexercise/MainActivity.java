@@ -1,5 +1,6 @@
 package com.tcs.example.androidstudio.myexercise;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,12 +109,21 @@ public class MainActivity extends ActionBarActivity {
 
         private Exception exception;
 
+        protected void onPreExecute() {
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Cargando...");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
+        }
+
+
+
         protected String doInBackground(String... urls) {
             try {
 
                 ParserJSON parse = new ParserJSON();
                 parse.consult();
-
+                Log.i("BACKGROUND", "doInBackground");
 
             } catch (Exception e) {
                 this.exception = e;
@@ -121,7 +133,8 @@ public class MainActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String feed) {
-
+            Log.i("POSTEXECUTE", "onPostExecute");
+            pDialog.dismiss();
         }
     }
 }

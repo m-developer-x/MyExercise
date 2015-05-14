@@ -1,15 +1,14 @@
 package com.tcs.example.androidstudio.myexercise;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -19,8 +18,6 @@ import java.io.UnsupportedEncodingException;
  * Created by 825124 on 13/05/2015.
  */
 public class ParserJSON {
-
-    static String json = "";
 
     public JSONObject consult()
     {
@@ -39,7 +36,10 @@ public class ParserJSON {
 
 
 
-            Log.i("RESPONSE X", httpEntity.toString());
+
+            Log.i("RESPONSE X", EntityUtils.toString(httpEntity));
+
+
         }
         catch (UnsupportedEncodingException e)
         {
