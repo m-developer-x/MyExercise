@@ -2,7 +2,11 @@ package com.tcs.example.androidstudio.myexercise;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Parcelable;
+import android.provider.SyncStateContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,41 +15,37 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONObject;
 
-public class MainActivity extends ActionBarActivity {
+import java.util.ArrayList;
 
-    ProgressDialog pDialog;
+
+public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+
+    private ProgressDialog pDialog;
+    private ListView list;
+    private ArrayList<Earthquake> earthquakes = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-/*
-        ListView list = new ListView(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.custom_row,
-                R.id.line1, new String[] {"Bill","Tom","Sally","Jenny"});
 
-        list.setAdapter(adapter);
+        //Initialize ListView
+        list = new ListView(this);
+        list.setOnItemClickListener(this);
 
-
-
-        setContentView(list);
-*/
-        //setContentView(R.layout.activity_main);
-
-        ListView list = new ListView(this);
-        setContentView(list);
-
-        CustomAdapter adapter = new CustomAdapter(this, R.layout.custom_row,
-                android.R.id.text1, new String[] {"Bill","Tom","Sally","Jenny"});
-
-        list.setAdapter(adapter);
-
+        //Invoke AsyncTask
         new AsyncTaskC().execute();
+
+
+        //Set ListView
+        setContentView(list);
 
         Log.i("MESSAGE", "MAIN ACTIVITY");
 
@@ -73,13 +73,30 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private static class CustomAdapter extends ArrayAdapter<String>{
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        public CustomAdapter(Context context, int layout, int resId, String[] items ){
+        Earthquake earthquake = earthquakes.get(position);
 
-            super(context, layout, resId, items);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("Earthquake", earthquake);
+        Intent detailActivity = new Intent(this, DetailActivity.class);
+        detailActivity.putExtras(bundle);
+        startActivity(detailActivity);
+
+        Log.i("ONCLICK","LISTENER OF LISTVIEW");
+
+    }
+
+    private static class CustomAdapter extends ArrayAdapter<Earthquake>{
+
+        public CustomAdapter(Context context, ArrayList<Earthquake> earthquakes){
+
+            super(context,0,earthquakes);
         }
 
+
+        //Method to build custom item
         public View getView(int position, View convertView, ViewGroup parent){
 
             View row = convertView;
@@ -89,15 +106,40 @@ public class MainActivity extends ActionBarActivity {
                 row = LayoutInflater.from(getContext()).inflate(R.layout.custom_row, parent, false);
             }
 
-            String item = getItem(position);
+            //Initialize Earthquake bean that represent an item if the list
+            Earthquake item = getItem(position);
 
-            //ImageView left = (ImageView)row.findViewById(R.id.leftimage);
-            //ImageView right = (ImageView)row.findViewById(R.id.rightimage);
-            TextView text = (TextView)row.findViewById(android.R.id.text1);
+            //Initialize components of item
+            ImageView right = (ImageView)row.findViewById(R.id.rightimage);
+            TextView text1 = (TextView)row.findViewById(R.id.line1);
+            TextView text2 = (TextView)row.findViewById(R.id.line2);
 
-            //left.setImageResource(R.drawable.icon);
-            //right.setImageResource(R.drawable.icon);
-            text.setText(item);
+            String place = item.getPlace();
+            String magnitude = item.getMagnitude();
+
+            //Set values to components of item
+            right.setImageResource(R.drawable.icon);
+            text1.setText(place);
+            text2.setText(magnitude);
+
+            double mag = Double.parseDouble(magnitude);
+
+            if(mag < 1.0){
+                //text2.setTextColor(Color.rgb(0,100,0));
+                row.setBackgroundColor(Color.rgb(0, 100, 0));
+            }else if(mag >= 1.0 && mag <5.0){
+                //text2.setTextColor(Color.rgb(255,215,0));
+                row.setBackgroundColor(Color.rgb(255, 215, 0));
+            }else if(mag >= 5.0 && mag <9.0){
+                //text2.setTextColor(Color.rgb(255, 140, 0));
+                row.setBackgroundColor(Color.rgb(255, 140, 0));
+            }else if(mag >= 9.0 && mag < 10.0){
+                //text2.setTextColor(Color.rgb(255,0,0));
+                row.setBackgroundColor(Color.rgb(255, 0, 0));
+            }else{
+                //text2.setTextColor(Color.rgb(165,42,42));
+                row.setBackgroundColor(Color.rgb(165, 42, 42));
+            }
 
             return row;
 
@@ -105,11 +147,12 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    class AsyncTaskC extends AsyncTask<String, Void, String> {
-
-        private Exception exception;
+    //Class AsyncTaskC to consume webservice of Earthquakes
+    class AsyncTaskC extends AsyncTask<Void, Void, String> {
 
         protected void onPreExecute() {
+
+            //Initialize and start Progress Dialog
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Cargando...");
             pDialog.setIndeterminate(false);
@@ -118,22 +161,31 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-        protected String doInBackground(String... urls) {
-            try {
+        protected String doInBackground(Void... params) {
 
-                ParserJSON parse = new ParserJSON();
-                parse.consult();
                 Log.i("BACKGROUND", "doInBackground");
 
-            } catch (Exception e) {
-                this.exception = e;
-                return null;
-            }
-            return "";
+                //Connect and consume webservice
+                WebServiceConnection webserviceresponse = new WebServiceConnection();
+                JSONObject jsonresponse = webserviceresponse.getResponseService();
+
+                //Parse json and get elements
+                ParserJSON parse = new ParserJSON();
+                earthquakes = parse.parserJSON(jsonresponse);
+
+            return null;
         }
 
-        protected void onPostExecute(String feed) {
+        protected void onPostExecute(String result) {
+
+            //Initialize and build the CustomerAdapter
             Log.i("POSTEXECUTE", "onPostExecute");
+            CustomAdapter adapter = new CustomAdapter(MainActivity.this,earthquakes);
+
+            //Set customer adapter to list
+            list.setAdapter(adapter);
+
+            //Finish the progress dialog
             pDialog.dismiss();
         }
     }
