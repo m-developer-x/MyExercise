@@ -2,7 +2,6 @@ package com.tcs.example.androidstudio.myexercise;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,19 +13,8 @@ public class DetailActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Bundle bundle = this.getIntent().getExtras();
-
-        if(bundle!=null){
-            Earthquake earthquake = bundle.getParcelable("Earthquake");
-
-            Log.i("PLACE:",earthquake.getPlace());
-            Log.i("MAGNITUDE:",earthquake.getMagnitude());
-            Log.i("TIME:",earthquake.getTime());
-            Log.i("LATITUDE:",earthquake.getLatitude());
-            Log.i("LONGITUDE",earthquake.getLongitude());
-            Log.i("DEPTH",earthquake.getDepth());
-        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

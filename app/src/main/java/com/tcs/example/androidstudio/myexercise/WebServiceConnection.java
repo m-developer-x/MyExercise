@@ -8,6 +8,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,12 +29,16 @@ public class WebServiceConnection {
     public JSONObject getResponseService(){
 
         String jsonResponse = "{'response':'null'}";
+        int timeOut = 3000;
 
         Log.i("START CONNECTION", "Initiate WebService Connection");
 
         try{
 
-            HttpClient httpclient = new DefaultHttpClient();
+
+            HttpParams httpparams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpparams,timeOut);
+            HttpClient httpclient = new DefaultHttpClient(httpparams);
             HttpPost httppost = new HttpPost(URL_WEBSERVICE);
             HttpResponse httpresponse = httpclient.execute(httppost);
             HttpEntity httpentity = httpresponse.getEntity();
