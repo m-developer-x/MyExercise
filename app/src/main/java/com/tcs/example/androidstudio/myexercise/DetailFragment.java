@@ -55,10 +55,10 @@ public class DetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            place = getArguments().getString(ARG_PLACE);
-            magnitude = getArguments().getString(ARG_MAGNITUDE);
-            time = getArguments().getString(ARG_TIME);
-            depth = getArguments().getString(ARG_DEPTH);
+            place = "PLACE: "+getArguments().getString(ARG_PLACE);
+            magnitude = "MAGNITUDE: "+getArguments().getString(ARG_MAGNITUDE);
+            time = "DATE & TIME: "+getArguments().getString(ARG_TIME);
+            depth = "DEPTH: "+getArguments().getString(ARG_DEPTH);
 
             Log.i("PLACE IN FRAGMENT",place);
         }

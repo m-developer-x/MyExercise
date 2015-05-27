@@ -39,7 +39,6 @@ Simple Version Custom ListView
                 android:textSize="15sp"
                 android:textStyle="bold|italic"
 
-
             />
 
             <TextView
