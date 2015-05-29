@@ -22,7 +22,9 @@ Simple Version Custom ListView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dip">
+    android:padding="10dip"
+    android:background="@drawable/row_background"
+    >
 
     <LinearLayout
         android:id="@+id/layout1"

@@ -4,7 +4,10 @@ import android.os.Bundle;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -19,12 +22,18 @@ import java.util.Calendar;
 import java.util.Locale;
 
 
-public class DetailActivity extends FragmentActivity {
+public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        ActionBar actionbar = getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayShowHomeEnabled(true);
+        actionbar.setDisplayShowTitleEnabled(true);
+        actionbar.setTitle("EARTHQUAKES");
 
         Bundle bundle = getIntent().getExtras();
         Earthquake earthquake = bundle.getParcelable("Earthquake");
@@ -72,7 +81,9 @@ public class DetailActivity extends FragmentActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == android.R.id.home) {
+            Log.i("HOMEASUP","FINISH");
+            finish();
             return true;
         }
 

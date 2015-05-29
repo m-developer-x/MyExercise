@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.provider.SyncStateContract;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,7 +28,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private ProgressDialog pDialog;
     private ListView list;
@@ -35,6 +37,13 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionbar = getSupportActionBar();
+        //actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayShowHomeEnabled(true);
+        actionbar.setDisplayShowTitleEnabled(true);
+        actionbar.setIcon(R.drawable.ic_menu_white_24dp);
+        actionbar.setTitle("EARTHQUAKES");
 
         //Initialize ListView
         list = new ListView(this);
@@ -66,7 +75,11 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.update) {
+
+            //Invoke AsyncTask
+            new AsyncTaskC().execute();
+
             return true;
         }
 
