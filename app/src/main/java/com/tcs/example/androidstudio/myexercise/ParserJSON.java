@@ -36,47 +36,7 @@ public class ParserJSON {
 
     public JSONObject parserJSON(String json)
     {
-        /*
-        String url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
 
-        Log.i("START", "CONECTION");
-        // ESTABLECIMIENTO CONEXION CON EL WEBSERVICE
-        try
-        {
-            HttpClient httpclient = new DefaultHttpClient();
-
-            HttpPost httppost = new HttpPost(url);
-
-            HttpResponse httpResponse = httpclient.execute(httppost);
-            HttpEntity httpEntity = httpResponse.getEntity();
-
-
-
-
-            Log.i("RESPONSE X", EntityUtils.toString(httpEntity));
-
-
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            Log.i("RESPONSE", "UNSUPPORTEDENCODINGEXCEPTION");
-            e.printStackTrace();
-        }
-        catch (ClientProtocolException e)
-        {
-            Log.i("RESPONSE", "CLIENTPROTOCOLEXCEPTION");
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            Log.i("RESPONSE", "IOEXCEPTION");
-            e.printStackTrace();
-        }
-        catch(Exception e)
-        {
-            Log.i("RESPONSE E", e.toString());
-        }
-        */
         return null;
     }
 

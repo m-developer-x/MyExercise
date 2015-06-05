@@ -3,7 +3,11 @@ package com.tcs.example.androidstudio.myexercise;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.provider.SyncStateContract;
@@ -20,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -47,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //Initialize ListView
         list = new ListView(this);
+
         list.setOnItemClickListener(this);
 
         //Invoke AsyncTask
@@ -113,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         public View getView(int position, View convertView, ViewGroup parent){
 
             View row = convertView;
+
             //Inflate a new row if one isn't recycled
             if (row==null){
 
@@ -131,31 +138,71 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             String magnitude = item.getMagnitude();
 
             //Set values to components of item
-            right.setImageResource(R.drawable.icon);
+            right.setImageResource(R.drawable.ic_info_outline_white_24dp);
             text1.setText(place);
             text2.setText(magnitude);
+
 
             double mag = Double.parseDouble(magnitude);
 
             if(mag < 1.0){
                 //text2.setTextColor(Color.rgb(0,100,0));
-                row.setBackgroundColor(Color.rgb(0, 100, 0));
+                //row.setBackgroundColor(Color.rgb(0, 100, 0));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,0,100,0),Color.rgb(0,100,0)));
             }else if(mag >= 1.0 && mag <5.0){
                 //text2.setTextColor(Color.rgb(255,215,0));
-                row.setBackgroundColor(Color.rgb(255, 215, 0));
+                //row.setBackgroundColor(Color.rgb(255, 215, 0));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,215,0),Color.rgb(255, 215, 0)));
             }else if(mag >= 5.0 && mag <9.0){
                 //text2.setTextColor(Color.rgb(255, 140, 0));
-                row.setBackgroundColor(Color.rgb(255, 140, 0));
+                //row.setBackgroundColor(Color.rgb(255, 140, 0));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,140,0),Color.rgb(255, 140, 0)));
             }else if(mag >= 9.0 && mag < 10.0){
                 //text2.setTextColor(Color.rgb(255,0,0));
-                row.setBackgroundColor(Color.rgb(255, 0, 0));
+                //row.setBackgroundColor(Color.rgb(255, 0, 0));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,0,0),Color.rgb(255, 0, 0)));
             }else{
                 //text2.setTextColor(Color.rgb(165,42,42));
-                row.setBackgroundColor(Color.rgb(165, 42, 42));
+                //row.setBackgroundColor(Color.rgb(165, 42, 42));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,165,42,42),Color.rgb(165,42,42)));
+
             }
 
             return row;
 
+        }
+
+        private Drawable makeColorStateListForItem(int position,int press, int deft){
+
+            int pressedColor = press;
+            //int checkedColor = checkedColorForItem(position);
+            int defaultColor = deft;
+
+
+
+            StateListDrawable stateListDrawable = new StateListDrawable();
+
+            stateListDrawable.addState(new int[]{android.R.attr.state_pressed},new ColorDrawable(pressedColor));
+            //stateListDrawable.addState(new int[]{android.R.attr.state_checked},new ColorDrawable(checkedColor));
+            stateListDrawable.addState(new int[]{0},new ColorDrawable(defaultColor));
+
+
+            return stateListDrawable;
+        }
+
+        private int pressedColorForItem(int position){
+
+            return Color.BLUE;
+        }
+
+        private int checkedColorForItem(int position){
+
+            return Color.RED;
+        }
+
+        private int defaultColorForItem(int position){
+
+            return Color.WHITE;
         }
 
     }

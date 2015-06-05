@@ -2,7 +2,6 @@ package com.tcs.example.androidstudio.myexercise;
 
 import android.os.Bundle;
 
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -29,12 +28,14 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        //Set action bar
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setDisplayShowHomeEnabled(true);
         actionbar.setDisplayShowTitleEnabled(true);
         actionbar.setTitle("EARTHQUAKES");
 
+        //Get bundle with data of Earthquakes
         Bundle bundle = getIntent().getExtras();
         Earthquake earthquake = bundle.getParcelable("Earthquake");
 
@@ -43,18 +44,23 @@ public class DetailActivity extends AppCompatActivity {
         cal.setTimeInMillis(Long.parseLong(earthquake.getTime()));
         String date = DateFormat.format("dd-MM-yyyy HH:mm:ss", cal).toString();
 
+        //Get instance of Detail Fragment
         DetailFragment detailFragment = DetailFragment.newInstance(earthquake.getPlace(),earthquake.getMagnitude(),
                 date,earthquake.getDepth());
 
+        //Set Fragment in Activity
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(android.R.id.content, detailFragment, "DetailFragment");
         fragmentTransaction.commit();
 
+        //Set latitude and longitude in LatLng Object
         LatLng UPV = new LatLng(Double.parseDouble(earthquake.getLatitude()), Double.parseDouble(earthquake.getLongitude()));
 
+        //Get instance of Map Fragment
         GoogleMap map = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(UPV,5));
 
+        //Set map attributes
         map.addMarker(new MarkerOptions()
                 .position(UPV)
                 .title("EARTHQUAKE")

@@ -5,12 +5,14 @@
     android:orientation="vertical"
     >
 
+    <!-- Detail Fragment -->
     <fragment class="com.tcs.example.androidstudio.myexercise.DetailFragment"
         android:id="@+id/detailfragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2"/>
 
+    <!-- Map Fragment -->
     <fragment class="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/map"
         android:layout_width="match_parent"

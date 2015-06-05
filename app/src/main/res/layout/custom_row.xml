@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-Simple Version Custom ListView
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dip"
-    android:background="@drawable/row_background">
-
-    <TextView
-        android:id="@+id/line1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        />
-
-</LinearLayout> -->
-
+<!--Simple Version Custom ListView  -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dip"
-    android:background="@drawable/row_background"
     >
+
+
+    <ImageView
+        android:id="@+id/rightimage"
+        android:layout_width="32dip"
+        android:layout_height="32dip"
+        android:contentDescription="" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/primary_text_disabled_material_dark" />
 
     <LinearLayout
         android:id="@+id/layout1"
@@ -53,13 +47,6 @@ Simple Version Custom ListView
             />
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/rightimage"
-        android:layout_width="32dip"
-        android:layout_height="32dip"
-        android:contentDescription="" />
-
 
 
 </LinearLayout>

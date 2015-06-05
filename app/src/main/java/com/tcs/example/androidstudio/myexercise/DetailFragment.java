@@ -21,7 +21,7 @@ import android.widget.TextView;
  */
 public class DetailFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // the fragment initialization parameters of Earthquake
     private static final String ARG_PLACE = "place";
     private static final String ARG_MAGNITUDE = "magnitude";
     private static final String ARG_TIME = "time";
@@ -35,8 +35,9 @@ public class DetailFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-
+    //Static method for get instance of Detail Fragment
     public static DetailFragment newInstance(String place, String magnitude,String time, String depth) {
+        //Set arguments
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PLACE, place);
@@ -54,6 +55,8 @@ public class DetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Get arguments to asign field values
         if (getArguments() != null) {
             place = "PLACE: "+getArguments().getString(ARG_PLACE);
             magnitude = "MAGNITUDE: "+getArguments().getString(ARG_MAGNITUDE);
@@ -68,14 +71,15 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
+        //Initialite TextViews
         TextView textViewPlace = (TextView) view.findViewById(R.id.place);
         TextView textViewMagnitude = (TextView) view.findViewById(R.id.magnitude);
         TextView textViewTime = (TextView) view.findViewById(R.id.time);
         TextView textViewDepth = (TextView) view.findViewById(R.id.depth);
 
+        //Asign text to TextView
         textViewPlace.setText(place);
         textViewMagnitude.setText(magnitude);
         textViewTime.setText(time);
