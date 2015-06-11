@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -42,25 +44,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
 
         ActionBar actionbar = getSupportActionBar();
-        //actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setDisplayShowHomeEnabled(true);
         actionbar.setDisplayShowTitleEnabled(true);
-        actionbar.setIcon(R.drawable.ic_menu_white_24dp);
+
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+        //actionbar.setIcon(R.drawable.ic_menu_white_24dp);
         actionbar.setTitle("EARTHQUAKES");
 
+
         //Initialize ListView
-        list = new ListView(this);
+        //list = new ListView(this);
+
+        list = (ListView)findViewById(R.id.list);
 
         list.setOnItemClickListener(this);
 
         //Invoke AsyncTask
         new AsyncTaskC().execute();
 
-
         //Set ListView
-        setContentView(list);
+        //setContentView(list);
 
         Log.i("MESSAGE", "MAIN ACTIVITY");
 
