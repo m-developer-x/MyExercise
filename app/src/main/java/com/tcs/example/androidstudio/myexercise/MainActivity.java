@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //Set values to components of item
             right.setImageResource(R.drawable.ic_info_outline_white_24dp);
             text1.setText(place);
-            text2.setText(magnitude);
+            text2.setText("Magnitude: "+magnitude);
 
 
             double mag = Double.parseDouble(magnitude);
