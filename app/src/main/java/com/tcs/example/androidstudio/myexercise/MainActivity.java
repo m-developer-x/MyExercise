@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.provider.SyncStateContract;
@@ -29,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -64,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         list.setOnItemClickListener(this);
 
-        //Invoke AsyncTask
-        new AsyncTaskC().execute();
+        //Start the operation to consume the webservice
+        getWebServiceData();
 
         //Set ListView
         //setContentView(list);
@@ -91,8 +94,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //noinspection SimplifiableIfStatement
         if (id == R.id.update) {
 
-            //Invoke AsyncTask
-            new AsyncTaskC().execute();
+            //Start the operation to consume the webservice
+            getWebServiceData();
 
             return true;
         }
@@ -115,6 +118,42 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    public void getWebServiceData(){
+
+        if(isNetworkAvailable(this)){
+            //Invoke AsyncTask
+            new AsyncTaskC().execute();
+        }else{
+            Toast message =
+                    Toast.makeText(getApplicationContext(),
+                            "The Network Connection is not Available", Toast.LENGTH_SHORT);
+
+            message.show();
+        }
+    }
+
+    //Method to check network available
+    public boolean isNetworkAvailable(Context c) {
+        ConnectivityManager connectMgr = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectMgr != null) {
+            NetworkInfo[] netInfo = connectMgr.getAllNetworkInfo();
+            if (netInfo != null) {
+                for (NetworkInfo net : netInfo) {
+                    if (net.getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+                }
+            }
+        }
+        else {
+
+        }
+        return false;
+
+
+    }
+
+    //Class CustomerAdapter to generate custom items for listview
     private static class CustomAdapter extends ArrayAdapter<Earthquake>{
 
         public CustomAdapter(Context context, ArrayList<Earthquake> earthquakes){
@@ -154,21 +193,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             double mag = Double.parseDouble(magnitude);
 
             if(mag < 1.0){
+                //Green Color
                 //text2.setTextColor(Color.rgb(0,100,0));
                 //row.setBackgroundColor(Color.rgb(0, 100, 0));
-                row.setBackground(makeColorStateListForItem(position,Color.argb(100,0,100,0),Color.rgb(0,100,0)));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,76,175,80),Color.rgb(76,175,80)));
             }else if(mag >= 1.0 && mag <5.0){
+                //Yellow Color
                 //text2.setTextColor(Color.rgb(255,215,0));
                 //row.setBackgroundColor(Color.rgb(255, 215, 0));
-                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,215,0),Color.rgb(255, 215, 0)));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,235,59),Color.rgb(255, 235, 59)));
             }else if(mag >= 5.0 && mag <9.0){
+                //Orange Color
                 //text2.setTextColor(Color.rgb(255, 140, 0));
                 //row.setBackgroundColor(Color.rgb(255, 140, 0));
-                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,140,0),Color.rgb(255, 140, 0)));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,152,0),Color.rgb(255, 152, 0)));
             }else if(mag >= 9.0 && mag < 10.0){
+                //Red Color
                 //text2.setTextColor(Color.rgb(255,0,0));
                 //row.setBackgroundColor(Color.rgb(255, 0, 0));
-                row.setBackground(makeColorStateListForItem(position,Color.argb(100,255,0,0),Color.rgb(255, 0, 0)));
+                row.setBackground(makeColorStateListForItem(position,Color.argb(100,244,67,54),Color.rgb(244, 67, 54)));
             }else{
                 //text2.setTextColor(Color.rgb(165,42,42));
                 //row.setBackgroundColor(Color.rgb(165, 42, 42));
@@ -222,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             //Initialize and start Progress Dialog
             pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Cargando...");
+            pDialog.setMessage("Loading...");
             pDialog.setIndeterminate(false);
             pDialog.show();
         }
