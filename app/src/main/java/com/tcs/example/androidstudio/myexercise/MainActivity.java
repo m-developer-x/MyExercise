@@ -2,6 +2,7 @@ package com.tcs.example.androidstudio.myexercise;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.provider.SyncStateContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -35,6 +37,10 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ProgressDialog pDialog;
     private ListView list;
     private ArrayList<Earthquake> earthquakes = null;
+    private static final int READ_BLOCK_SIZE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,11 +131,44 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             //Invoke AsyncTask
             new AsyncTaskC().execute();
         }else{
+
+            new AlertDialog.Builder(this)
+                    .setTitle("The Network Connection is not Available")
+                    .setMessage("Do you want to get data of the last request?")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            try {
+                                FileInputStream fileIn=openFileInput("jsonCache.txt");
+                                InputStreamReader InputRead= new InputStreamReader(fileIn);
+
+                                char[] inputBuffer= new char[READ_BLOCK_SIZE];
+                                String s="";
+                                int charRead;
+
+                                while ((charRead=InputRead.read(inputBuffer))>0) {
+                                    // char to string conversion
+                                    String readstring=String.copyValueOf(inputBuffer,0,charRead);
+                                    s +=readstring;
+                                }
+                                InputRead.close();
+                                Toast.makeText(getBaseContext(), s,Toast.LENGTH_SHORT).show();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
+
+            /*
             Toast message =
                     Toast.makeText(getApplicationContext(),
                             "The Network Connection is not Available", Toast.LENGTH_SHORT);
 
             message.show();
+            */
         }
     }
 
@@ -223,13 +263,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }
 
+        //Set state color to press and unpress item
         private Drawable makeColorStateListForItem(int position,int press, int deft){
 
             int pressedColor = press;
             //int checkedColor = checkedColorForItem(position);
             int defaultColor = deft;
-
-
 
             StateListDrawable stateListDrawable = new StateListDrawable();
 
@@ -278,23 +317,53 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                 //Connect and consume webservice
                 WebServiceConnection webserviceresponse = new WebServiceConnection();
-                JSONObject jsonresponse = webserviceresponse.getResponseService();
 
-                //Parse json and get elements
-                ParserJSON parse = new ParserJSON();
-                earthquakes = parse.parserJSON(jsonresponse);
+                if(webserviceresponse.getResponseService()){
 
-            return null;
+                    //Store json file to use in offline mode
+                    try {
+                        FileOutputStream fileout=openFileOutput("jsonCache.txt", MODE_PRIVATE);
+                        OutputStreamWriter outputWriter=new OutputStreamWriter(fileout);
+                        outputWriter.write(webserviceresponse.getJSONString());
+                        outputWriter.close();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return "error";
+                    }
+
+                    //Parse json and get elements
+                    ParserJSON parse = new ParserJSON();
+                    earthquakes = parse.parserJSON(webserviceresponse.getJSONObject());
+
+
+                }else{
+                    return "error";
+                }
+
+
+            return "ok";
         }
 
         protected void onPostExecute(String result) {
 
-            //Initialize and build the CustomerAdapter
             Log.i("POSTEXECUTE", "onPostExecute");
-            CustomAdapter adapter = new CustomAdapter(MainActivity.this,earthquakes);
 
-            //Set customer adapter to list
-            list.setAdapter(adapter);
+            if(result.equals("ok")){
+                Log.i("RESULT", result);
+                //Initialize and build the CustomerAdapter
+                CustomAdapter adapter = new CustomAdapter(MainActivity.this,earthquakes);
+
+                //Set customer adapter to list
+                list.setAdapter(adapter);
+
+            }else{
+                Toast message =
+                        Toast.makeText(getApplicationContext(),
+                                "There is a problem to recover data, try again later!!!", Toast.LENGTH_SHORT);
+
+                message.show();
+            }
 
             //Finish the progress dialog
             pDialog.dismiss();
