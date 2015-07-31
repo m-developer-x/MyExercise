@@ -128,37 +128,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void getWebServiceData(){
 
         if(isNetworkAvailable(this)){
-            //Invoke AsyncTask
+            //Invoke AsyncTask to consume web service
             new AsyncTaskC().execute();
         }else{
 
             new AlertDialog.Builder(this)
                     .setTitle("The Network Connection is not Available")
                     .setMessage("Do you want to get data of the last request?")
-                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setIcon(android.R.drawable.ic_dialog_info)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         public void onClick(DialogInterface dialog, int whichButton) {
+                                //Execute AsynTask to read a local json file
+                                new AsyncTaskCLocal().execute();
 
-                            try {
-                                FileInputStream fileIn=openFileInput("jsonCache.txt");
-                                InputStreamReader InputRead= new InputStreamReader(fileIn);
-
-                                char[] inputBuffer= new char[READ_BLOCK_SIZE];
-                                String s="";
-                                int charRead;
-
-                                while ((charRead=InputRead.read(inputBuffer))>0) {
-                                    // char to string conversion
-                                    String readstring=String.copyValueOf(inputBuffer,0,charRead);
-                                    s +=readstring;
-                                }
-                                InputRead.close();
-                                Toast.makeText(getBaseContext(), s,Toast.LENGTH_SHORT).show();
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
                         }})
                     .setNegativeButton(android.R.string.no, null).show();
 
@@ -369,4 +352,81 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             pDialog.dismiss();
         }
     }
+
+
+
+    //Class AsyncTaskCLocal to get data of local json file
+    class AsyncTaskCLocal extends AsyncTask<Void, Void, String> {
+
+        protected void onPreExecute() {
+
+            //Initialize and start Progress Dialog
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Loading...");
+            pDialog.setIndeterminate(false);
+            pDialog.show();
+        }
+
+
+
+        protected String doInBackground(Void... params) {
+
+            Log.i("BACKGROUND", "doInBackground");
+
+            //Read local JSON Fila
+            try {
+                FileInputStream fileIn=openFileInput("jsonCache.txt");
+                InputStreamReader InputRead= new InputStreamReader(fileIn);
+
+                char[] inputBuffer= new char[READ_BLOCK_SIZE];
+                String s="";
+                int charRead;
+
+                while ((charRead=InputRead.read(inputBuffer))>0) {
+                    // char to string conversion
+                    String readstring=String.copyValueOf(inputBuffer,0,charRead);
+                    s +=readstring;
+                }
+                InputRead.close();
+
+                JSONObject jsonObject = new JSONObject(s);
+
+                //Parse json and get elements
+                ParserJSON parse = new ParserJSON();
+                earthquakes = parse.parserJSON(jsonObject);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "error";
+            }
+
+            return "ok";
+        }
+
+        protected void onPostExecute(String result) {
+
+            Log.i("POSTEXECUTE", "onPostExecute");
+
+            if(result.equals("ok")){
+                Log.i("RESULT", result);
+                //Initialize and build the CustomerAdapter
+                CustomAdapter adapter = new CustomAdapter(MainActivity.this,earthquakes);
+
+                //Set customer adapter to list
+                list.setAdapter(adapter);
+
+            }else{
+                Toast message =
+                        Toast.makeText(getApplicationContext(),
+                                "There is a problem to recover data, try again later!!!", Toast.LENGTH_SHORT);
+
+                message.show();
+            }
+
+            //Finish the progress dialog
+            pDialog.dismiss();
+        }
+    }
+
+
 }
